@@ -16,7 +16,7 @@
 #define RX_PARAM_SIZE	4
 #define TX_PARAM_SIZE	4
 
-//#define TESTER
+#define TESTER
 
 typedef enum _RXINDEX 			//	Rx Buffer matching at index
 {								//  Used in PCR_Task.c
@@ -89,6 +89,7 @@ typedef enum _COMMAND			//	Rx_Buffer[0] = Set Command
 	CMD_STOP,
 	CMD_PARAM_WRITE,
 	CMD_PARAM_END,
+	CMD_RESUME,					// 7	Resume protocol // YSH 220711
 	CMD_BOOTLOADER = 0x55
 } COMMAND;
 
@@ -191,6 +192,7 @@ typedef enum _OPRSTATE
 #define	RES_GO_DONE				0x04
 #define	RES_STOP_DONE			0x05
 #define	RES_PCR_END				0x06
+#define RES_RESUME				0x07	// YSH 220711
 
 #endif
 

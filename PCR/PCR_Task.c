@@ -150,6 +150,10 @@ void Pre_Process(void)
 		case CMD_STOP:		// Stop PWM
 			Stop_PWM_MODE();
 			break;
+
+		case CMD_RESUME:	// Resume protocol when IsTimeInfinite == True // YSH 220711
+			IsTimeInfinite = FALSE;
+			break;
 	}
 }
 

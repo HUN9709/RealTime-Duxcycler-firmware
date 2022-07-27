@@ -43,6 +43,9 @@ unsigned char Chamber_Fan = 0x00;
 unsigned char System_Fan = 0x00;
 BYTE Heater = 0x00;
 
+//YSH 220718
+int MaxDuration = 0;
+
 BOOL IsCoverCtrl = FALSE;
 BOOL IsChamberCtrl = FALSE;
 BOOL IsCoverHeated = FALSE;

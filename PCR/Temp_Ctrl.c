@@ -441,8 +441,13 @@ void Get_Chamber_Duration(float temp)
 	out = (Proportional + IntPart + Derivative);
 
 	// Out Limits
-	if( out > 99.0 ) PWM_Duration = 99;
-	else if( out < -99.0) PWM_Duration = -99;
+	// if( out > 99.0 ) PWM_Duration = 99;
+	// else if( out < -99.0) PWM_Duration = -99;
+	// else PWM_Duration = out;
+
+	// YSH 220718
+	if (out > MaxDuration) PWM_Duration = MaxDuration;
+	else if (out < -MaxDuration)  PWM_Duration = -MaxDuration;
 	else PWM_Duration = out;
 
 	if( out < 0.0 ) PWM_Dir = 1;

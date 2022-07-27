@@ -1,34 +1,89 @@
 # MyPCR_Firmware
 
-- v3.7 release note
+- v3.7 release note (Added melting curve)
 
 > 본 Real-Time Duxcycler firmware는 biomedux의 DuxCycler_Firmware v3.5 를 기반으로 한다.
 >(DuxCycler_Firmware v3.5 : https://github.com/biomedux/DuxCycler_Firmware/tree/2797656ed7f225fa034f60f68c1c02ce60e075c1)
 > 
-> Real-Time pcr 기능이 요구됨에 따라 진행중인 protocol을 멈추는 기능이 필요된다.
-> 따라서 STATE_PAUSE 를 추가하지 않고, `./PCR/PCR_Task.c` 의 `Task_Control()` 함수에서 사용하는`IsTimeInfinite` 변수를 사용한다.
-> `IsTimeInfinite = TRUE` 상태에서 protocol를 재개하는 Command.RESUME 을 추가하였다.
+>Melting curve를 위한 firmware 수정
 
 > 변동사항은 아래와 같다.
 > 
 > ```C
-> // CMD_RESUME 추가
-> // ./DEFINE/UserDef.h line 83
-> typedef enum _COMMAND
->{
->   ...
->	CMD_RESUME,					// 7	Resume protocol // YSH 220711
->   ...
->} COMMAND;
+> // MaxDuration 변수 Global type으로 추가
+>// ./DEFINE/GlobalTypeVars.c line 47
+>// YSH 220718
+>int MaxDuration = 0;
+>
+>// ./DEFINE/GlobalTypeVars.h line 58
+>// YSH 220718
+>extern int MaxDuration;
 >```
 > ```C
-> // CMD_RESUME 받을 시 처리
-> // ./DEFINE/PCR_Task.c line 153
-> switch(Cur_Command)
-> {
-> ...
-> case CMD_RESUME:	// Resume protocol when IsTimeInfinite == True // YSH 220711
->   IsTimeInfinite = FALSE;
->   break;
-> }
+> // RX, TX buffer 수정
+> // ./DEFINE/UserDefs.h line 21
+>typedef enum _RXINDEX 			//	Rx Buffer matching at index
+>{								//  Used in PCR_Task.c
+>...
+>	RX_MAXDURATION = 0x08, // YSH 220720
+>} RXINDEX;
+>
+>...
+>
+> // ./DEFINE/UserDefs.h line 34
+>typedef enum _TXINDEX			//	Tx Buffer matching at index
+>{
+>...
+>	TX_MAXDURATION = 45			// 45	// YSH 220718
+>
+>} TXINDEX;
+>```
+> ```C
+> // HOST 에서 받은 MaxDuration 값 저장
+> // ./PCR/PCR_Task.c line 125
+>void Pre_Process(void)
+>{
+>...
+>	// YSH 220718
+>	if (Rx_Buffer[RX_MAXDURATION] != 0x00)
+>	{
+>		MaxDuration = Rx_Buffer[RX_MAXDURATION];
+>	}
+>...
+>}
+>```
+> ```C
+> // Tx buffer 보내기 전 현재 MaxDuration 값 setting
+> // ./PCR/PCR_Task.c line 566
+>void Post_Process(void)
+>{
+>...
+>
+>	// YSH 220718
+>	ToSendDataBuffer[TX_MAXDURATION] = (unsigned char)MaxDuration;
+>}
+>```
+> ```C
+> // Tx buffer 보내기 전 현재 MaxDuration 값 setting
+> // ./PCR/PCR_Task.c line 566
+>void Post_Process(void)
+>{
+>...
+>
+>	// YSH 220718
+>	ToSendDataBuffer[TX_MAXDURATION] = (unsigned char)MaxDuration;
+>}
+>```
+> ```C
+> // 설정된 MaxDuration 값으로 PWM_Duration 을 limit
+> // ./PCR/Temp_Ctrl.c.c line 421
+>void Get_Chamber_Duration(float temp)
+>{
+>...
+>	// YSH 220718
+>	if (out > MaxDuration) PWM_Duration = MaxDuration;
+>	else if (out < -MaxDuration)  PWM_Duration = -MaxDuration;
+>	else PWM_Duration = out;
+>...
+>}
 >```

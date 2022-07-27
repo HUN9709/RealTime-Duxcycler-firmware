@@ -128,6 +128,12 @@ void Pre_Process(void)
 
 	Cur_Command = Rx_Buffer[RX_CMD];
 
+	// YSH 220718
+	if (Rx_Buffer[RX_MAXDURATION] != 0x00)
+	{
+		MaxDuration = Rx_Buffer[RX_MAXDURATION];
+	}
+
 	Prev_State = Cur_State;
 
 	switch(Cur_Command)
@@ -623,4 +629,7 @@ void Post_Process(void)
 	// Heatsink Temperature
 	ToSendDataBuffer[TX_SINKTEMPH] = Heatsink_Temp_H;
 	ToSendDataBuffer[TX_SINKTEMPL] = Heatsink_Temp_L;
+
+	// YSH 220718
+	ToSendDataBuffer[TX_MAXDURATION] = (unsigned char)MaxDuration;
 }

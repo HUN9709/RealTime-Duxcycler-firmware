@@ -28,6 +28,7 @@ typedef enum _RXINDEX 			//	Rx Buffer matching at index
 	RX_LIDTEMP,
 	RX_REQLINE,
 	RX_CURRENT_ACT_NO,	// for task write indexing
+	RX_MAXDURATION = 0x08, // YSH 220720
 } RXINDEX;
 
 typedef enum _TXINDEX			//	Tx Buffer matching at index
@@ -65,7 +66,8 @@ typedef enum _TXINDEX			//	Tx Buffer matching at index
 	TX_KI_1 = 33,				//	33
 	TX_KD_1 = 37,				//	37
 								//	41, 42, 43 is Serial Number from Bluetooth Ver
-	TX_VERSION = 44				//	44	Firmware version	// YJ 130202
+	TX_VERSION = 44,				//	44	Firmware version	// YJ 130202
+	TX_MAXDURATION = 45			// 45	// YSH 220718
 
 } TXINDEX;
 

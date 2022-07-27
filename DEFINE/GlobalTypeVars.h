@@ -54,6 +54,9 @@ extern unsigned char Chamber_Fan;		// neccessary change var name
 extern unsigned char System_Fan;
 extern BYTE Heater;
 
+// YSH 220718
+extern int MaxDuration;
+
 /** Flags *******************************************/
 extern BOOL IsCoverCtrl;
 extern BOOL IsChamberCtrl;
